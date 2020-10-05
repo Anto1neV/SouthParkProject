@@ -10,7 +10,7 @@ public class Cartman {
     }
     
     public void lecture() throws FileNotFoundException {
-        String name="insultes2.txt";
+        String name="C:/Users/AntoineV/OneDrive/5ème année -M2-/Cours/M2_S1/Concept_Objet/Projet/Insultes2.txt";
         File file = new File(name);
         Scanner in = new Scanner(file);
 
