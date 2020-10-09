@@ -1,12 +1,14 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Master extends Character{
 
     private String name;
-    private List<Minions> listOfMinions = new List<Minions>;
+    private List<Minions> listOfMinions = new ArrayList<Minions>();
 
-    public Master(String name){
-        this.listOfMinions=
+    public Master(String name,List<String> insultList,int size,Gang gang,Position position,Position[] minionsPositons){
+        super(insultList, size, gang, position);
+        this.setMinions(this.listOfMinions,minionsPositons,gang);
     }
 
     public String getName() {
@@ -17,13 +19,13 @@ public class Master extends Character{
         this.name = name;
     }
 
-    public Minions[] getListOfMinions() {
+    public List<Minions> getListOfMinions() {
         return listOfMinions;
     }
 
-    private setMinions(List<Minions> listOfMinions){
+    private void setMinions(List<Minions> listOfMinions, Position[] minionsPositons,Gang gang){
         for (int i = 0; i < 3; i++) {
-            listOfMinions.add(new Minions());
+            listOfMinions.add(new Minions(gang,minionsPositons[i]));
         }
     }
 }
