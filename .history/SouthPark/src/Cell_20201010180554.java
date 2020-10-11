@@ -1,14 +1,8 @@
 public class Cell {
     Content content = Content.Void;
     Position position;
-    public Cell(Position position,Boolean isBorder,Boolean isObstacle){
+    public Cell(Position position){
         this.position=position;
-        if(isBorder){
-            this.content = Content.Border;
-        }
-        if(isObstacle){
-            this.content=Content.Obstacle;
-        }
     }
 
     public Content getContent() {

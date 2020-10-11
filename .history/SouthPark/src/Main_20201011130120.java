@@ -10,6 +10,5 @@ public class Main {
             minions1.move();
             i++;
         }
-        System.out.println(minions1.position);
       }
 }
