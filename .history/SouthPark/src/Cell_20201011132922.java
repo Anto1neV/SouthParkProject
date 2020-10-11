@@ -31,12 +31,7 @@ public class Cell {
 
     public void setCharacter(Minions character) {
         this.character = character;
-        setContent(Content.CHARACTER);
-    }
-
-    public void removeCharacter(){
-        this.character=null;
-        setContent(Content.Void);
+        setContent(Content.Character);
     }
 
 }

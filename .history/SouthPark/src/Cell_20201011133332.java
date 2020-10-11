@@ -31,7 +31,7 @@ public class Cell {
 
     public void setCharacter(Minions character) {
         this.character = character;
-        setContent(Content.CHARACTER);
+        setContent(Content.Character);
     }
 
     public void removeCharacter(){

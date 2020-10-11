@@ -30,15 +30,9 @@ public class Grid {
     }
 
     public void printGrid(){
-        int wordSize=0;
         for (int y=0; y<nbRow;y++){
             for (int x=0; x<nbColumn; x++){
-                wordSize=12-this.grid[x][y].getContent().toString().length();
-               System.out.print(this.grid[x][y].getContent());
-               for(int i=0;i<wordSize;i++){
-                System.out.print(" ");
-               }
-               System.out.print("|");
+               System.out.print(this.grid[x][y].getContent()+" |");
             }
             System.out.println();
         }

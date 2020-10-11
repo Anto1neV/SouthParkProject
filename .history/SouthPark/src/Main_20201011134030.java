@@ -6,13 +6,13 @@ public class Main {
         int i=0;
         Grid grid = new Grid(10,10);
         Minions minions1 = new Minions(Gang.WestGang,new Position(1, 1), grid.getGrid());
+        grid.printGrid();
 
-
-        while (i<50){
-            grid.printGrid();
+        while (i<5){
             minions1.move();
+            grid.printGrid();
             i++;
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.SECONDS.sleep(2);
             System.out.print("\033[H\033[2J");  
             System.out.flush();
         }
