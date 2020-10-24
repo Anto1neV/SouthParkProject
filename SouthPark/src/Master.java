@@ -13,9 +13,9 @@ public class Master extends Character{
             Gang gang,
             Position position,
             Position[] minionsPositons,
-            Cell[][]grid){
+            Grid grid){
                 
-        super(insultList, size, gang, position);
+        super(insultList, size, gang, position,grid);
         this.setMinions(this.listOfMinions,minionsPositons,gang,grid);
     }
 
@@ -31,7 +31,7 @@ public class Master extends Character{
         return listOfMinions;
     }
 
-    private void setMinions(List<Minions> listOfMinions, Position[] minionsPositons,Gang gang,Cell[][] grid){
+    private void setMinions(List<Minions> listOfMinions, Position[] minionsPositons,Gang gang,Grid grid){
         for (int i = 0; i < 3; i++) {
             listOfMinions.add(new Minions(gang,minionsPositons[i],grid));
         }
