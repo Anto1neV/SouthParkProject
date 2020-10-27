@@ -27,6 +27,10 @@ public class Master extends Character{
         this.name = name;
     }
 
+    public Position getPosition() {
+        return this.position;
+    }
+
     public List<Minions> getListOfMinions() {
         return listOfMinions;
     }
@@ -35,5 +39,9 @@ public class Master extends Character{
         for (int i = 0; i < 3; i++) {
             listOfMinions.add(new Minions(gang,minionsPositons[i],grid));
         }
+    }
+
+    public void setListOfMinions(List<Minions> listOfMinions) {
+        this.listOfMinions = listOfMinions;
     }
 }

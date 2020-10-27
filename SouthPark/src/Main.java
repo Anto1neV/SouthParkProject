@@ -1,14 +1,23 @@
-import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         int i=0;
         Grid grid = new Grid(10,10);
-        Minions minions1 = new Minions(Gang.WestGang,new Position(1, 1), grid);
+        Minions minions1 = new Minions(Gang.WestGang,new Position(1, 4), grid);
+        Minions minions2 = new Minions(Gang.WestGang,new Position(2, 4), grid);
+        Minions minions3 = new Minions(Gang.WestGang,new Position(3, 4), grid);
+        List<String> insultCartman = new ArrayList<>();
+        insultCartman.add("Va chier !!!");
+        insultCartman.add("Ils ont tué Kenny !");
+        Position[] cartmanMinionsPositions = new Position[]{minions1.position,minions2.position,minions3.position};
+        Master cartman = new Master("Cartmarn",insultCartman,3,Gang.WestGang,new Position(1,1),cartmanMinionsPositions,grid);
+        minions1.setMaster(cartman);
 
 
-        while (i<50){
+        while (i<1){
             grid.printGrid();
             minions1.move();
             i++;

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
 
 public class Minions extends Character {
     private int mp;
@@ -24,26 +24,34 @@ public class Minions extends Character {
     }
 
     public void move(){
-        Cell nextCell = getAdjacentCells(this.position)[rand.nextInt(9)];
-        switch (nextCell.getContent()){
-            case Void:
-                this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();;
-                this.position.setX(nextCell.getPosition().getX());
-                this.position.setY(nextCell.getPosition().getY());
-                this.mp--;
-                nextCell.setCharacter(this);
-                System.out.println("the cell is empty");
-                break;
-            case Border:
-            System.out.println("the cell is a border");
-                break;
-            case Obstacle:
-                System.out.println("the cell is an obstacle");
-                break;
-            case CHARACTER:
-                System.out.println("there is a mate here");;
-                interactWithCharacter(nextCell.getPosition());
-                break;
+        List<Position> shortestPath = shortestPath();
+        if(checkEnoughMP(shortestPath)){
+            Cell nextCell = getAdjacentCells(this.position)[rand.nextInt(9)];
+            switch (nextCell.getContent()){
+                case Void:
+                    this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();;
+                    this.position.setX(nextCell.getPosition().getX());
+                    this.position.setY(nextCell.getPosition().getY());
+                    this.mp--;
+                    nextCell.setCharacter(this);
+                    System.out.println("the cell is empty");
+                    break;
+                case Border:
+                System.out.println("the cell is a border");
+                    break;
+                case Obstacle:
+                    System.out.println("the cell is an obstacle");
+                    break;
+                case CHARACTER:
+                    System.out.println("there is a mate here");;
+                    interactWithCharacter(nextCell.getPosition());
+                    break;
+                default:
+                    break;
+            }
+        }
+        else{
+            backToSafeZone(shortestPath);
         }
         
     }
@@ -95,63 +103,70 @@ public class Minions extends Character {
         }
     }
 
-    private List<Position> shortestPath(){
-        List<Position> posibleEnd = new ArrayList<Position>() ;
-        List<Position> shortestPath = new ArrayList<Position>() ;
-
-        for(int y=-(this.master.size/2);y<=this.master.size/2;y++){
-            for (int x=-(this.master.size/2);x<=this.master.size/2;x++){
-                Position currentPosition =  new Position(x,y);
-                posibleEnd.add(currentPosition);
-            }
+    private Boolean checkEnoughMP(List<Position> path){
+        if(path.size()<this.mp){
+            return true;
         }
-        int lenght = 0;
-        for(Position endPosition : posibleEnd){
-            if(leeAlgorithm(this.position, endPosition).size()>0){
-                lenght=leeAlgorithm(this.position, endPosition).size();
-                shortestPath=posibleEnd;
-            }
+        else{
+            return false;
         }
     }
 
-    private List<Position>  leeAlgorithm(Position start, Position end){
+    private List<Position> shortestPath(){
+        List<Position> possibleEnd = new ArrayList<Position>() ;
+        int masterSize = this.master.size;
+
+        //Stock the SafeZone's Cells
+        for(int y=this.master.getPosition().getY();y<=masterSize;y++){
+            for (int x=this.master.getPosition().getX();x<=masterSize;x++){
+                if(y==masterSize || x==masterSize){
+                    Position currentPosition =  new Position(x,y);
+                    possibleEnd.add(currentPosition);
+                }
+            }
+        }
+        return leeAlgorithm(this.position, possibleEnd);
+    }
+
+    private List<Position>  leeAlgorithm(Position start,  List<Position> endPositions){
         List<Integer> leeInt = new ArrayList<Integer>();
         List<Position> leePositions = new ArrayList<Position>();
-        List<Position> leePositionsVisited = new ArrayList<Position>();
         List<Position> shortPathList = new ArrayList<Position>();
-        int minDist = Integer.MAX_VALUE;
-
+        Boolean endFound = false;
+        Position endPosition = null;
+        System.out.println("SZ : "+endPositions);
        // Fill in the lee's tables
         int i=0;
         leePositions.add(start);
         leeInt.add(i);
-        while (i<grid.getGrid().length){
-            if(leePositions.get(i)!=leePositionsVisited.get(i)){
-                for (Cell cell : getAdjacentCells(leePositions.get(i))){
-                    if(cell.getContent()==Content.Void){
-                            leePositions.add(cell.getPosition());
-                            leeInt.add(i+1);
-                            leePositionsVisited.add(leePositions.get(i));
-                    }
-                    else if(cell.getPosition()==end){
-                        minDist=i+1;
-                        break;
-                    }
+        while (!endFound){
+            for (Cell cell : getAdjacentCells(leePositions.get(i))){
+                if(cell.getContent()==Content.Void && !leePositions.contains(cell.getPosition())){
+                        leePositions.add(cell.getPosition());
+                        leeInt.add(i+1);
+                        System.out.println(cell.getPosition());
+                }
+                else if(endPositions.contains(cell.getPosition())){
+                    endFound=true;
+                    endPosition=cell.getPosition();
                 }
             }
             i++;
         }
         //Store the good path
-        shortPathList.add(end);
-        while(i!=0){
-            for (Cell cell : getAdjacentCells(shortPathList.get(i))){
-                if(cell.getPosition()==leePositions.get(i)){
-                    shortPathList.add(leePositions.get(i));
-                    i--;
-                }
+        shortPathList.add(endPosition);
+        for(int j=leeInt.get(leeInt.size());j>0;j--){
+            for (Cell cell : getAdjacentCells(shortPathList.get(shortPathList.size()))){
+                if(leeInt.get(leePositions.indexOf(cell.getPosition()))==j){
+                    shortPathList.add(leePositions.get(j));
+                    break;
+                }    
             }
         }
         return shortPathList;
     }
 
+    private void backToSafeZone(List<Position> shortestPath){
+        System.out.println("He need to go back");
+    }
 }
