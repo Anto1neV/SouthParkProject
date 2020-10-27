@@ -26,29 +26,34 @@ public class Minions extends Character {
     public void move(){
         List<Position> shortestPath = shortestPath();
         if(checkEnoughMP(shortestPath)){
-            Cell nextCell = getAdjacentCells(this.position)[rand.nextInt(9)];
-            switch (nextCell.getContent()){
-                case Void:
-                    this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();;
-                    this.position.setX(nextCell.getPosition().getX());
-                    this.position.setY(nextCell.getPosition().getY());
-                    this.mp--;
-                    nextCell.setCharacter(this);
-                    System.out.println("the cell is empty");
-                    break;
-                case Border:
-                System.out.println("the cell is a border");
-                    break;
-                case Obstacle:
-                    System.out.println("the cell is an obstacle");
-                    break;
-                case CHARACTER:
-                    System.out.println("there is a mate here");;
-                    interactWithCharacter(nextCell.getPosition());
-                    break;
+        ArrayList <Cell> AdjacentCells = getAdjacentCells(this.position);
+        Cell nextCell;
+        if (AdjacentCells.size() != 0){
+            nextCell = AdjacentCells.get(rand.nextInt(AdjacentCells.size()));
+        }
+        else return;
+        
+        switch (nextCell.getContent()){
+            case Void:
+                this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();;
+                this.position.setX(nextCell.getPosition().getX());
+                this.position.setY(nextCell.getPosition().getY());
+                this.mp--;
+                nextCell.setCharacter(this);
+                System.out.println("the cell is empty");
+                break;
+            case Border:
+            System.out.println("the cell is a border");
+                break;
+            case Obstacle:
+                System.out.println("the cell is an obstacle");
+                break;
+            case CHARACTER:
+                System.out.println("there is a mate here");;
+                interactWithCharacter(nextCell.getPosition());
+                break;
                 default:
                     break;
-            }
         }
         else{
             backToSafeZone(shortestPath);
@@ -56,7 +61,7 @@ public class Minions extends Character {
         
     }
 
-    private void interactWithCharacter(Position characterPosition) {
+    private void interactWithCharacterRPC(Position characterPosition) {
         Minions characterMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getCharacter();
         if(characterMet.master==this.master){
             System.out.println("this is a friend");
@@ -68,16 +73,17 @@ public class Minions extends Character {
         }
         else{
             System.out.println("Suprise motherfucker !!!");
+            fightRPC(characterMet);
         }
     }
 
-    private Cell[] getAdjacentCells(Position currentPosition){
-        Cell[] adjacentCells = new Cell[9];
-        int i=0;
+    public ArrayList <Cell>  getAdjacentCells(Position currentPosition){
+        ArrayList <Cell> adjacentCells = new ArrayList<>();
         for(int y=-1;y<=1;y++){
             for(int x=-1;x<=1;x++){
-                adjacentCells[i]=grid.getGrid()[currentPosition.getX()+x][currentPosition.getY()+y];
-                i++;
+                    adjacentCells.add(grid.getGrid()[currentPosition.getX()+x][currentPosition.getY()+y]);
+                    System.out.println();
+                }    
             }
         }
         return adjacentCells;
@@ -164,6 +170,52 @@ public class Minions extends Character {
             }
         }
         return shortPathList;
+    }
+
+
+
+    private void fightRPC(Minions minion){
+        int scMinionMet=0;
+        int scMinion=0;
+        int var1=-1;
+        int var2=-1;
+
+        while (scMinionMet==0 || scMinion==0){
+            var1=this.chooseTypeRPC();
+            var2=minion.chooseTypeRPC();
+
+            if ((var1 ==0 && var2==2) || (var1 ==1 && var2==0) || (var1 ==2 && var2==1)){
+                scMinion=1;
+                System.out.println("Minion wins");
+            }
+            
+
+            if ((var2==0 && var1==2) || (var2==1 && var1==0) || (var2==2 && var1==1)){
+                scMinionMet=1;
+                System.out.println("Minion's met wins");
+            }
+        }
+
+        if (scMinion==1){
+            
+        }
+    }
+
+    private int chooseTypeRPC() {
+        int x;
+        Random rand = new Random();
+        switch (x = rand.nextInt(3)) {
+            case (0):
+                System.out.println("Rock is chosen");
+                break;
+            case(1):
+                System.out.println("Paper is chosen");
+                break;
+            case(2):
+                System.out.println("Cisors are chosen");
+                break;
+        }
+        return x;
     }
 
     private void backToSafeZone(List<Position> shortestPath){
