@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+
 
 public abstract class Minions extends Character {
     private int mp;
@@ -33,9 +35,8 @@ public abstract class Minions extends Character {
             
             switch (nextCell.getContent()){
                 case Void:
-                    this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();;
-                    this.position.setX(nextCell.getPosition().getX());
-                    this.position.setY(nextCell.getPosition().getY());
+                    this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
+                    this.setPosition(nextCell.getPosition());
                     this.mp--;
                     nextCell.setCharacter(this);
                     System.out.println("the cell is empty");
@@ -125,7 +126,6 @@ public abstract class Minions extends Character {
         List<Position> shortPathList = new ArrayList<Position>();
         Boolean endFound = false;
         Position endPosition = null;
-        System.out.println("SZ : " + endPositions);
         // Fill in the lee's tables
         int i = 0;
         leePositions.add(start);
@@ -135,24 +135,31 @@ public abstract class Minions extends Character {
                 if (cell.getContent() == Content.Void && !leePositions.contains(cell.getPosition())) {
                     leePositions.add(cell.getPosition());
                     leeInt.add(i + 1);
-                } else if (endPositions.contains(cell.getPosition())) {
+                }  
+                if (endPositions.contains(cell.getPosition())) {
                     endFound = true;
                     endPosition = cell.getPosition();
+                    break;
                 }
             }
             i++;
         }
+        System.out.println(endPosition);
 
         // Store the good path
         shortPathList.add(endPosition);
         for (int j = leeInt.get(leeInt.size()-1); j >= 0; j--) {
             for (Cell cell : getAdjacentCells(shortPathList.get(shortPathList.size()-1))) {
-                if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j) {
-                    shortPathList.add(leePositions.get(j));
-                    break;
-                }
+            	if(leePositions.indexOf(cell.getPosition())>0) {
+            		if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j) {
+                        shortPathList.add(leePositions.get(j));
+                        break;
+                    }
+            	}
+                
             }
         }
+        shortPathList=shortPathList.stream().distinct().collect(Collectors.toList());
         return shortPathList;
     }
 

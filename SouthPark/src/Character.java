@@ -15,4 +15,44 @@ abstract class Character {
         this.position=position;
         this.grid=grid;
     }
+
+    public List<String> getInsultList() {
+        return insultList;
+    }
+
+    public void setInsultList(List<String> insultList) {
+        this.insultList = insultList;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Gang getGang() {
+        return gang;
+    }
+
+    public void setGang(Gang gang) {
+        this.gang = gang;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public void setGrid(Grid grid) {
+        this.grid = grid;
+    }
 }
