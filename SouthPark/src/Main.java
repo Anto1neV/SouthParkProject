@@ -6,9 +6,9 @@ public class Main {
     public static void main(String[] args) throws Exception {
         int i=0;
         Grid grid = new Grid(10,10);
-        Minions minions1 = new Minions(Gang.WestGang,new Position(1, 4), grid);
-        Minions minions2 = new Minions(Gang.WestGang,new Position(2, 4), grid);
-        Minions minions3 = new Minions(Gang.WestGang,new Position(3, 4), grid);
+        Minions minions1 = new BadassBoys(Gang.WestGang,new Position(1, 4), grid);
+        Minions minions2 = new Bullygirls(Gang.WestGang,new Position(2, 4), grid);
+        Minions minions3 = new DrunkBoys(Gang.WestGang,new Position(3, 4), grid);
         List<String> insultCartman = new ArrayList<>();
         insultCartman.add("Va chier !!!");
         insultCartman.add("Ils ont tué Kenny !");

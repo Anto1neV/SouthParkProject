@@ -36,9 +36,9 @@ public class Master extends Character{
     }
 
     private void setMinions(List<Minions> listOfMinions, Position[] minionsPositons,Gang gang,Grid grid){
-        for (int i = 0; i < 3; i++) {
-            listOfMinions.add(new Minions(gang,minionsPositons[i],grid));
-        }
+        listOfMinions.add(new BadassBoys(gang,minionsPositons[0],grid));
+        listOfMinions.add(new Bullygirls(gang, minionsPositons[1], grid));
+        listOfMinions.add(new DrunkBoys(gang, minionsPositons[2], grid));
     }
 
     public void setListOfMinions(List<Minions> listOfMinions) {

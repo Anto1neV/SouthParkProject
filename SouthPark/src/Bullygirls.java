@@ -17,7 +17,6 @@ public class Bullygirls extends Minions  {
             for(int x=-1;x<=1;x++){
                 if ((x==-1 && y==-1) || (x==-1 && y==1) || (x==1 && y==-1) || (x==1 && y==1)){
                     adjacentCells.add(grid.getGrid()[currentPosition.getX()+x][currentPosition.getY()+y]);
-                    System.out.println();
                 }    
             }
         }
