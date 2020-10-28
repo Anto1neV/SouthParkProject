@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-
 public abstract class Minions extends Character {
     private int mp;
     private Master master;
@@ -23,17 +22,17 @@ public abstract class Minions extends Character {
         this.master = master;
     }
 
-    public void move(){
+    public void move() {
         List<Position> shortestPath = shortestPath();
-        if(checkEnoughMP(shortestPath)){
+        if (checkEnoughMP(shortestPath)) {
             List<Cell> AdjacentCells = getAdjacentCells(this.position);
             Cell nextCell;
-            if (AdjacentCells.size() != 0){
+            if (AdjacentCells.size() != 0) {
                 nextCell = AdjacentCells.get(rand.nextInt(AdjacentCells.size()));
-            }
-            else return;
-            
-            switch (nextCell.getContent()){
+            } else
+                return;
+
+            switch (nextCell.getContent()) {
                 case Void:
                     this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
                     this.setPosition(nextCell.getPosition());
@@ -42,7 +41,7 @@ public abstract class Minions extends Character {
                     System.out.println("the cell is empty");
                     break;
                 case Border:
-                System.out.println("the cell is a border");
+                    System.out.println("the cell is a border");
                     break;
                 case Obstacle:
                     System.out.println("the cell is an obstacle");
@@ -51,11 +50,10 @@ public abstract class Minions extends Character {
                     System.out.println("there is a mate here");
                     interactWithCharacterRPC(nextCell.getPosition());
                     break;
-                    default:
-                        break;
+                default:
+                    break;
             }
-        }
-        else{
+        } else {
             backToSafeZone(shortestPath);
         }
     }
@@ -74,7 +72,7 @@ public abstract class Minions extends Character {
         }
     }
 
-    public abstract List<Cell> getAdjacentCells(Position currentPosition) ;
+    public abstract List<Cell> getAdjacentCells(Position currentPosition);
 
     private void shareKnowledge(String withWho, Minions characterMet) {
         List<String> notPresent = new ArrayList<String>(characterMet.insultList);
@@ -120,7 +118,7 @@ public abstract class Minions extends Character {
         return leeAlgorithm(this.position, possibleEnd);
     }
 
-    private List<Position> leeAlgorithm(Position start, List<Position> endPositions) {
+    private List<Position> leeAlgorithm(Position start, List<Position> safeZone) {
         List<Integer> leeInt = new ArrayList<Integer>();
         List<Position> leePositions = new ArrayList<Position>();
         List<Position> shortPathList = new ArrayList<Position>();
@@ -131,36 +129,52 @@ public abstract class Minions extends Character {
         leePositions.add(start);
         leeInt.add(i);
         while (!endFound) {
-            for (Cell cell : getAdjacentCells(leePositions.get(i))) {
-                if (cell.getContent() == Content.Void && !leePositions.contains(cell.getPosition())) {
-                    leePositions.add(cell.getPosition());
-                    leeInt.add(i + 1);
-                }  
-                if (endPositions.contains(cell.getPosition())) {
-                    endFound = true;
-                    endPosition = cell.getPosition();
-                    break;
+            //For every cells with the index i
+            List<Integer> allIndex = findAllIndexes(leeInt, i);
+            for(int index : allIndex){
+                for (Cell cell : getAdjacentCells(leePositions.get(index))) {
+                    if (cell.getContent() == Content.Void && !leePositions.contains(cell.getPosition())) {
+                        leePositions.add(cell.getPosition());
+                        leeInt.add(i + 1);
+                    }
+                    //SafeZone found
+                    if (safeZone.contains(cell.getPosition())) {
+                        endFound = true;
+                        endPosition = cell.getPosition();
+                        break;
+                    }
                 }
+                if(endFound){break;}
             }
             i++;
         }
-        System.out.println(endPosition);
-
+        
         // Store the good path
         shortPathList.add(endPosition);
-        for (int j = leeInt.get(leeInt.size()-1); j >= 0; j--) {
-            for (Cell cell : getAdjacentCells(shortPathList.get(shortPathList.size()-1))) {
-            	if(leePositions.indexOf(cell.getPosition())>0) {
-            		if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j) {
-                        shortPathList.add(leePositions.get(j));
+        for (int j=i-1; j >= 0; j--) {
+            for (Cell cell : getAdjacentCells(shortPathList.get(shortPathList.size() - 1))) {
+                if(leePositions.indexOf(cell.getPosition()) != -1 ){
+                    if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j) {
+                        shortPathList.add(cell.getPosition());
                         break;
                     }
-            	}
-                
+                }   
             }
         }
-        shortPathList=shortPathList.stream().distinct().collect(Collectors.toList());
+        shortPathList = shortPathList.stream().distinct().collect(Collectors.toList());
+        System.out.println(shortPathList);
         return shortPathList;
+    }
+
+    //For leeAlgorithm
+    private List<Integer> findAllIndexes(List<Integer> listOfIntegers,int i){
+        List<Integer> listOfIndex = new ArrayList<>();
+        for(int k=0;k<listOfIntegers.size();k++){
+            if(listOfIntegers.get(k)==i){
+                listOfIndex.add(k);
+            }
+        }
+        return listOfIndex;
     }
 
     private void fightRPC(Minions minion) {
