@@ -221,6 +221,12 @@ public abstract class Minions extends Character {
     }
 
     private void backToSafeZone(List<Position> shortestPath) {
-        System.out.println("He need to go back");
+        int x = shortestPath.get(shortestPath.size()-1).getX();
+        int y = shortestPath.get(shortestPath.size()-1).getY();
+        Cell nextCell = grid.getGrid()[x][y];
+        this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
+                    this.setPosition(nextCell.getPosition());
+                    this.mp--;
+                    nextCell.setCharacter(this);
     }
 }
