@@ -5,6 +5,7 @@ public class DrunkBoys extends Minions  {
 
     public DrunkBoys(Gang gang, Position position, Grid grid) {
         super(gang, position, grid);
+        this.insultList=super.insultList;
     }
 
 

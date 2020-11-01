@@ -25,11 +25,11 @@ public class Cell {
         return position;
     }
 
-    public Minions getCharacter() {
+    public Minions getMinion() {
         return minion;
     }
 
-    public void setCharacter(Minions minion) {
+    public void setMinion(Minions minion) {
         this.minion = minion;
         setContent(Content.CHARACTER);
     }
@@ -38,5 +38,4 @@ public class Cell {
         this.minion=null;
         setContent(Content.Void);
     }
-
 }

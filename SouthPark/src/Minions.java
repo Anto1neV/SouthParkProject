@@ -5,13 +5,13 @@ import java.util.stream.Collectors;
 
 public abstract class Minions extends Character {
     private int mp;
-    private Master master;
+    protected Master master;
     private Random rand = new Random();
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
         this.mp = 10;
-        this.grid.getGrid()[position.getX()][position.getY()].setCharacter(this);
+        this.grid.getGrid()[position.getX()][position.getY()].setMinion(this);
     }
 
     public Master getMaster() {
@@ -23,8 +23,7 @@ public abstract class Minions extends Character {
     }
 
     public void move() {
-        System.out.println(mp);
-        if(this.mp>0){
+        if(this.mp>=0){
             List<Position> shortestPath = shortestPath();
             if (checkEnoughMP(shortestPath)) {
                 List<Cell> AdjacentCells = getAdjacentCells(this.position);
@@ -39,7 +38,7 @@ public abstract class Minions extends Character {
                         this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
                         this.setPosition(nextCell.getPosition());
                         this.mp--;
-                        nextCell.setCharacter(this);
+                        nextCell.setMinion(this);
                         break;
                     case Border:
                         break;
@@ -64,7 +63,7 @@ public abstract class Minions extends Character {
     }
 
     private void interactWithCharacterRPC(Position characterPosition) {
-        Minions characterMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getCharacter();
+        Minions characterMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getMinion();
         if(characterMet != this){
             if (characterMet.getMaster() == this.master) {
                 System.out.println("this is a friend");
@@ -169,7 +168,6 @@ public abstract class Minions extends Character {
             }
         }
         shortPathList = shortPathList.stream().distinct().collect(Collectors.toList());
-        System.out.println(shortPathList);
         return shortPathList;
     }
 
@@ -236,13 +234,12 @@ public abstract class Minions extends Character {
             this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
             this.setPosition(nextCell.getPosition());
             this.mp--;
-            nextCell.setCharacter(this);
+            nextCell.setMinion(this);
         }
         else if(this.position==shortestPath.get(0)){
-            this.mp=20;
+            this.mp=10;
             shareKnowledge("teamMate", this.master);
             System.out.println("Refill...");
-
         }
     }
 }

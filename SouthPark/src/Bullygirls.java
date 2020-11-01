@@ -5,6 +5,7 @@ public class Bullygirls extends Minions  {
 
     public Bullygirls(Gang gang, Position position, Grid grid) {
         super(gang, position, grid);
+        this.insultList=super.insultList;
     }
 
 

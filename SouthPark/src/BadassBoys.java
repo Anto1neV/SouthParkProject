@@ -6,6 +6,7 @@ public class BadassBoys extends Minions  {
 
     public BadassBoys(Gang gang, Position position, Grid grid) {
         super(gang, position, grid);
+        this.insultList=super.insultList;
     }
 
     @Override
