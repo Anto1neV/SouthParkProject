@@ -1,7 +1,7 @@
 public class Cell {
     private Content content = Content.Void;
     private Position position;
-    private Minions character;
+    private Minions minion;
     
     public Cell(Position position,Boolean isBorder,Boolean isObstacle){
         this.position=position;
@@ -26,16 +26,16 @@ public class Cell {
     }
 
     public Minions getCharacter() {
-        return character;
+        return minion;
     }
 
-    public void setCharacter(Minions character) {
-        this.character = character;
+    public void setCharacter(Minions minion) {
+        this.minion = minion;
         setContent(Content.CHARACTER);
     }
 
     public void removeCharacter(){
-        this.character=null;
+        this.minion=null;
         setContent(Content.Void);
     }
 

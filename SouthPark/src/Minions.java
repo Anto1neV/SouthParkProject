@@ -10,7 +10,7 @@ public abstract class Minions extends Character {
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
-        this.mp = 20;
+        this.mp = 10;
         this.grid.getGrid()[position.getX()][position.getY()].setCharacter(this);
     }
 
@@ -23,60 +23,67 @@ public abstract class Minions extends Character {
     }
 
     public void move() {
-        List<Position> shortestPath = shortestPath();
-        if (checkEnoughMP(shortestPath)) {
-            List<Cell> AdjacentCells = getAdjacentCells(this.position);
-            Cell nextCell;
-            if (AdjacentCells.size() != 0) {
-                nextCell = AdjacentCells.get(rand.nextInt(AdjacentCells.size()));
-            } else
-                return;
-
-            switch (nextCell.getContent()) {
-                case Void:
-                    this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
-                    this.setPosition(nextCell.getPosition());
-                    this.mp--;
-                    nextCell.setCharacter(this);
-                    System.out.println("the cell is empty");
-                    break;
-                case Border:
-                    System.out.println("the cell is a border");
-                    break;
-                case Obstacle:
-                    System.out.println("the cell is an obstacle");
-                    break;
-                case CHARACTER:
-                    System.out.println("there is a mate here");
-                    interactWithCharacterRPC(nextCell.getPosition());
-                    break;
-                default:
-                    break;
+        System.out.println(mp);
+        if(this.mp>0){
+            List<Position> shortestPath = shortestPath();
+            if (checkEnoughMP(shortestPath)) {
+                List<Cell> AdjacentCells = getAdjacentCells(this.position);
+                Cell nextCell;
+                if (AdjacentCells.size() != 0) {
+                    nextCell = AdjacentCells.get(rand.nextInt(AdjacentCells.size()));
+                } else
+                    return;
+    
+                switch (nextCell.getContent()) {
+                    case Void:
+                        this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
+                        this.setPosition(nextCell.getPosition());
+                        this.mp--;
+                        nextCell.setCharacter(this);
+                        break;
+                    case Border:
+                        break;
+                    case Obstacle:
+                        break;
+                    case CHARACTER:
+                        interactWithCharacterRPC(nextCell.getPosition());
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                backToSafeZone(shortestPath);
             }
-        } else {
-            backToSafeZone(shortestPath);
+        }
+        else{
+            System.out.println(this.master+"'s minion is out of the game because he don't have enought MP");
+            Cell dead = this.grid.getGrid()[this.position.getX()][this.position.getY()];
+            dead.removeCharacter();
+            dead.setContent(Content.Obstacle);
         }
     }
 
     private void interactWithCharacterRPC(Position characterPosition) {
         Minions characterMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getCharacter();
-        if (characterMet.master == this.master) {
-            System.out.println("this is a friend");
-            shareKnowledge("teamMate", characterMet);
-        } else if (characterMet.gang == this.gang) {
-            System.out.println("yo yo, wasup !!");
-            shareKnowledge("gangMate", characterMet);
-        } else {
-            System.out.println("Suprise motherfucker !!!");
-            fightRPC(characterMet);
+        if(characterMet != this){
+            if (characterMet.getMaster() == this.master) {
+                System.out.println("this is a friend");
+                shareKnowledge("teamMate", characterMet);
+            } else if (characterMet.getMaster()!=this.master && characterMet.gang == this.gang) {
+                System.out.println("yo yo, wasup gang mate !!");
+                shareKnowledge("gangMate", characterMet);
+            } else {
+                System.out.println("Suprise motherfucker !!!");
+                fightRPC(characterMet);
+            }
         }
     }
 
     public abstract List<Cell> getAdjacentCells(Position currentPosition);
 
-    private void shareKnowledge(String withWho, Minions characterMet) {
+    private void shareKnowledge(String withWho, Character characterMet) {
         List<String> notPresent = new ArrayList<String>(characterMet.insultList);
-        notPresent.removeAll(this.insultList); // Toutes les insultes du character rencontré non connues
+        notPresent.removeAll(this.insultList); // All unknown insults of the charac
         if (!notPresent.isEmpty()) {
             switch (withWho) {
                 case "teamMate":
@@ -221,12 +228,21 @@ public abstract class Minions extends Character {
     }
 
     private void backToSafeZone(List<Position> shortestPath) {
-        int x = shortestPath.get(shortestPath.size()-1).getX();
-        int y = shortestPath.get(shortestPath.size()-1).getY();
-        Cell nextCell = grid.getGrid()[x][y];
-        this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
-                    this.setPosition(nextCell.getPosition());
-                    this.mp--;
-                    nextCell.setCharacter(this);
+        if(shortestPath.size()>1){
+            System.out.println("Back to Safe Zone");
+            int x = shortestPath.get(shortestPath.size()-2).getX();
+            int y = shortestPath.get(shortestPath.size()-2).getY();
+            Cell nextCell = grid.getGrid()[x][y];
+            this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
+            this.setPosition(nextCell.getPosition());
+            this.mp--;
+            nextCell.setCharacter(this);
+        }
+        else if(this.position==shortestPath.get(0)){
+            this.mp=20;
+            shareKnowledge("teamMate", this.master);
+            System.out.println("Refill...");
+
+        }
     }
 }
