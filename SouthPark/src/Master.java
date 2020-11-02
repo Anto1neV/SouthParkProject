@@ -13,7 +13,6 @@ public class Master extends Character{
             int size,
             Gang gang,
             Position position,
-            Position[] minionsPositons,
             Grid grid){
         super(insultList, size, gang, position,grid);
     }
