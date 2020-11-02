@@ -16,10 +16,21 @@ public class Master extends Character{
             Position position,
             Grid grid){
         super(insultList, size, gang, position,grid);
+        this.safeZone = new ArrayList<Position>();
         for (int i=0;i<size;i++){
             for(int j=0;j<size;j++){
-                this.safeZone = new ArrayList<Position>();
-                this.safeZone.add(this.grid.getGrid()[position.getX()+i][position.getY()+j].getPosition());
+                Cell sfCell = this.grid.getGrid()[position.getX()+i][position.getY()+j];
+                this.safeZone.add(sfCell.getPosition());
+                switch (name){
+                    case "Cartman" :
+                        sfCell.setContent(Content.CartmanSafeZone);
+                    case "Kenny" :
+                        sfCell.setContent(Content.KennySafeZone);
+                    case "Kyle":
+                        sfCell.setContent(Content.KyleSafeZone);
+                    case "Stan":
+                        sfCell.setContent(Content.StanSafeZone);
+                }
             }
         }
     }

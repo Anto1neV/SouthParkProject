@@ -10,6 +10,7 @@ public abstract class Minions extends Character {
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
+        this.insultList = this.master.getInsultList();
         this.mp = 10;
         this.grid.getGrid()[position.getX()][position.getY()].setMinion(this);
     }
@@ -23,18 +24,17 @@ public abstract class Minions extends Character {
     }
 
     public void move() {
-        System.out.println("mp = "+this.mp);
-        System.out.println("minion position "+this.position);
-        if(this.mp>0 || this.master.getSafeZone().contains(this.position)){
+        if (this.mp > 0) {
             List<Position> shortestPath = shortestPath();
             if (checkEnoughMP(shortestPath)) {
+                refillMP();
                 List<Cell> AdjacentCells = getAdjacentCells(this.position);
                 Cell nextCell;
                 if (AdjacentCells.size() != 0) {
                     nextCell = AdjacentCells.get(rand.nextInt(AdjacentCells.size()));
                 } else
                     return;
-    
+
                 switch (nextCell.getContent()) {
                     case Void:
                         this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
@@ -55,9 +55,8 @@ public abstract class Minions extends Character {
             } else {
                 backToSafeZone(shortestPath);
             }
-        }
-        else{
-            System.out.println(this.master+"'s minion is out of the game because he don't have enought MP");
+        } else {
+            System.out.println(this.master + "'s minion is out of the game because he don't have enought MP");
             Cell dead = this.grid.getGrid()[this.position.getX()][this.position.getY()];
             dead.removeCharacter();
             dead.setContent(Content.Obstacle);
@@ -66,11 +65,11 @@ public abstract class Minions extends Character {
 
     private void interactWithCharacterRPC(Position characterPosition) {
         Minions characterMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getMinion();
-        if(characterMet != this){
+        if (characterMet != this) {
             if (characterMet.getMaster() == this.master) {
                 System.out.println("this is a friend");
                 shareKnowledge("teamMate", characterMet);
-            } else if (characterMet.getMaster()!=this.master && characterMet.gang == this.gang) {
+            } else if (characterMet.getMaster() != this.master && characterMet.gang == this.gang) {
                 System.out.println("yo yo, wasup gang mate !!");
                 shareKnowledge("gangMate", characterMet);
             } else {
@@ -98,12 +97,19 @@ public abstract class Minions extends Character {
                     }
                     System.out.println("OK ! I give you the half...");
                     break;
+                default:
+                    int SomeOfnotPresent = notPresent.size() / (rand.nextInt(notPresent.size()));
+                    for (int i = 0; i < SomeOfnotPresent; i++) {
+                        this.insultList.add(characterMet.insultList.get(i));
+                    }
+                    System.out.println("OK ! I give you " + SomeOfnotPresent + "bad words ...");
+                    break;
             }
         }
     }
 
     private Boolean checkEnoughMP(List<Position> path) {
-        if (path.size() < this.mp-1) {
+        if (path.size() < this.mp - 1) {
             return true;
         } else {
             return false;
@@ -137,48 +143,49 @@ public abstract class Minions extends Character {
         leePositions.add(start);
         leeInt.add(i);
         while (!endFound) {
-            //For every cells with the index i
+            // For every cells with the index i
             List<Integer> allIndex = findAllIndexes(leeInt, i);
-            for(int index : allIndex){
+            for (int index : allIndex) {
                 for (Cell cell : getAdjacentCells(leePositions.get(index))) {
                     if (cell.getContent() == Content.Void && !leePositions.contains(cell.getPosition())) {
                         leePositions.add(cell.getPosition());
                         leeInt.add(i + 1);
                     }
-                    //SafeZone found
+                    // SafeZone found
                     if (safeZone.contains(cell.getPosition())) {
                         endFound = true;
                         endPosition = cell.getPosition();
                         break;
                     }
                 }
-                if(endFound){break;}
+                if (endFound) {
+                    break;
+                }
             }
             i++;
         }
-        
+
         // Store the good path
         shortPathList.add(endPosition);
-        for (int j=i-1; j >= 0; j--) {
+        for (int j = i - 1; j >= 0; j--) {
             for (Cell cell : getAdjacentCells(shortPathList.get(shortPathList.size() - 1))) {
-                if(leePositions.indexOf(cell.getPosition()) != -1 ){
-                    if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j && cell.getPosition()!=start) {
+                if (leePositions.indexOf(cell.getPosition()) != -1) {
+                    if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j && cell.getPosition() != start) {
                         shortPathList.add(cell.getPosition());
                         break;
                     }
-                }   
+                }
             }
         }
         shortPathList = shortPathList.stream().distinct().collect(Collectors.toList());
-        System.out.println(shortPathList);
         return shortPathList;
     }
 
-    //For leeAlgorithm
-    private List<Integer> findAllIndexes(List<Integer> listOfIntegers,int i){
+    // For leeAlgorithm
+    private List<Integer> findAllIndexes(List<Integer> listOfIntegers, int i) {
         List<Integer> listOfIndex = new ArrayList<>();
-        for(int k=0;k<listOfIntegers.size();k++){
-            if(listOfIntegers.get(k)==i){
+        for (int k = 0; k < listOfIntegers.size(); k++) {
+            if (listOfIntegers.get(k) == i) {
                 listOfIndex.add(k);
             }
         }
@@ -198,6 +205,7 @@ public abstract class Minions extends Character {
             if ((var1 == 0 && var2 == 2) || (var1 == 1 && var2 == 0) || (var1 == 2 && var2 == 1)) {
                 scMinion = 1;
                 System.out.println("Minion wins");
+                shareKnowledge("ennemy", minion);
             }
 
             if ((var2 == 0 && var1 == 2) || (var2 == 1 && var1 == 0) || (var2 == 2 && var1 == 1)) {
@@ -228,23 +236,25 @@ public abstract class Minions extends Character {
         return x;
     }
 
-    private void backToSafeZone(List<Position> shortestPath) {
-
-        if(this.master.getSafeZone().contains(this.position)){
-            this.mp=10;
+    private void refillMP() {
+        if (this.master.getSafeZone().contains(this.position)) {
+            this.mp = 10;
             shareKnowledge("teamMate", this.master);
             System.out.println("Refill...");
         }
-        else if(shortestPath.size()>0){
+    }
+
+    private void backToSafeZone(List<Position> shortestPath) {
+        if (shortestPath.size() > 0) {
             System.out.println("Back to Safe Zone");
-            int x = shortestPath.get(shortestPath.size()-1).getX();
-            int y = shortestPath.get(shortestPath.size()-1).getY();
+            int x = shortestPath.get(shortestPath.size() - 1).getX();
+            int y = shortestPath.get(shortestPath.size() - 1).getY();
             Cell nextCell = grid.getGrid()[x][y];
             this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
             this.setPosition(nextCell.getPosition());
             this.mp--;
             nextCell.setMinion(this);
         }
-        
+        refillMP();
     }
 }

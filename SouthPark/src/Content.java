@@ -1,3 +1,3 @@
 public enum Content {
-    Void,CHARACTER,Obstacle,Border
+    Void,CHARACTER,Obstacle,Border,CartmanSafeZone,KennySafeZone,KyleSafeZone,StanSafeZone
 }
