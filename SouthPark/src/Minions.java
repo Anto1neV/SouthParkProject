@@ -23,7 +23,9 @@ public abstract class Minions extends Character {
     }
 
     public void move() {
-        if(this.mp>=0){
+        System.out.println("mp = "+this.mp);
+        System.out.println("minion position "+this.position);
+        if(this.mp>0 || this.master.getSafeZone().contains(this.position)){
             List<Position> shortestPath = shortestPath();
             if (checkEnoughMP(shortestPath)) {
                 List<Cell> AdjacentCells = getAdjacentCells(this.position);
@@ -101,7 +103,7 @@ public abstract class Minions extends Character {
     }
 
     private Boolean checkEnoughMP(List<Position> path) {
-        if (path.size() < this.mp) {
+        if (path.size() < this.mp-1) {
             return true;
         } else {
             return false;
@@ -112,7 +114,7 @@ public abstract class Minions extends Character {
         List<Position> possibleEnd = new ArrayList<Position>();
         int masterSize = this.master.size;
 
-        // Stock the SafeZone's Cells
+        // Stock the SafeZone's border Cells
         for (int y = this.master.getPosition().getY(); y <= masterSize; y++) {
             for (int x = this.master.getPosition().getX(); x <= masterSize; x++) {
                 if (y == masterSize || x == masterSize) {
@@ -160,7 +162,7 @@ public abstract class Minions extends Character {
         for (int j=i-1; j >= 0; j--) {
             for (Cell cell : getAdjacentCells(shortPathList.get(shortPathList.size() - 1))) {
                 if(leePositions.indexOf(cell.getPosition()) != -1 ){
-                    if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j) {
+                    if (leeInt.get(leePositions.indexOf(cell.getPosition())) == j && cell.getPosition()!=start) {
                         shortPathList.add(cell.getPosition());
                         break;
                     }
@@ -168,6 +170,7 @@ public abstract class Minions extends Character {
             }
         }
         shortPathList = shortPathList.stream().distinct().collect(Collectors.toList());
+        System.out.println(shortPathList);
         return shortPathList;
     }
 
@@ -226,20 +229,22 @@ public abstract class Minions extends Character {
     }
 
     private void backToSafeZone(List<Position> shortestPath) {
-        if(shortestPath.size()>1){
+
+        if(this.master.getSafeZone().contains(this.position)){
+            this.mp=10;
+            shareKnowledge("teamMate", this.master);
+            System.out.println("Refill...");
+        }
+        else if(shortestPath.size()>0){
             System.out.println("Back to Safe Zone");
-            int x = shortestPath.get(shortestPath.size()-2).getX();
-            int y = shortestPath.get(shortestPath.size()-2).getY();
+            int x = shortestPath.get(shortestPath.size()-1).getX();
+            int y = shortestPath.get(shortestPath.size()-1).getY();
             Cell nextCell = grid.getGrid()[x][y];
             this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
             this.setPosition(nextCell.getPosition());
             this.mp--;
             nextCell.setMinion(this);
         }
-        else if(this.position==shortestPath.get(0)){
-            this.mp=10;
-            shareKnowledge("teamMate", this.master);
-            System.out.println("Refill...");
-        }
+        
     }
 }

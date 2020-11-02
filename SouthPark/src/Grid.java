@@ -14,7 +14,7 @@ public class Grid {
         this.nbRow=nbRow;
     }
 
-    private void generateGrid ( int nbRow, int nbColumn){
+    private void generateGrid (int nbColumn, int nbRow){
         boolean isBorder;
         for (int y=0; y<nbRow; y++){
             for (int x=0; x<nbColumn; x++){

@@ -1,44 +1,56 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import javafx.application.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
-public class Main {
-    public static void main(String[] args) throws Exception {
-        int i=0;
-        Grid grid = new Grid(10,10);
-        BadassBoys bb1 = new BadassBoys(Gang.WestGang,new Position(4, 4), grid);
-        Bullygirls bg1 = new Bullygirls(Gang.WestGang,new Position(2, 4), grid);
-        DrunkBoys db1 = new DrunkBoys(Gang.WestGang,new Position(3, 4), grid);
+public class Main extends Application{
+    private Scene scene;
+    private static final int TILE_SIZE = 40;
+    private static final int W = 800;
+    private static final int H = 600;
+    private static final int X_TILES = W / TILE_SIZE;
+    private static final int Y_TILES = H / TILE_SIZE;
+    private Grid grid = new Grid(X_TILES, Y_TILES);
 
-        BadassBoys bb2 = new BadassBoys(Gang.EastGang,new Position(7, 7), grid);
-        Bullygirls bg2 = new Bullygirls(Gang.EastGang,new Position(8, 7), grid);
-        DrunkBoys db2 = new DrunkBoys(Gang.EastGang,new Position(9, 7), grid);
+    private Parent createContent() {
+        Pane root = new Pane();
+        Button runSimulationButton = new Button("Start");
+        Simulation sim = new Simulation(runSimulationButton,this.grid);
+        root.setPrefSize(W, H);
 
-        //Cartman
-        List<String> insultCartman = new ArrayList<>();
-        insultCartman.add("Va chier !!!");
-        insultCartman.add("Ils ont tué Kenny !");
-        Master cartman = new Master("Cartman",insultCartman,3,Gang.WestGang,new Position(1,1),grid);
-        cartman.setMinions(bb1,bg1,db1);
-        bb1.insultList.add("putain d'enfoiré de fils de pute");
-        bg1.insultList.add("VASY MAMAN BAISE MOI");
-        db1.insultList.add("Pourquoi s'insulter alors qu'on peux fumer un pétard ?");
-
-        //Kenny
-        List<String> insultKenny = new ArrayList<>();
-        Master kenny = new Master("Kenny",insultKenny,3,Gang.EastGang,new Position(9,9),grid);
-
-
-        while (i<60){
-            grid.printGrid();
-            bb1.move();
-            bg1.move();
-            db1.move();
-            i++;
-            TimeUnit.SECONDS.sleep(1);
-            Thread.sleep(1000);
-            System.out.print("\033[H\033[2J");  
-            System.out.flush();
+        for (int y = 0; y < Y_TILES; y++) {
+            for (int x = 0; x < X_TILES; x++) {
+                Position pos = new Position(x, y);
+                root.getChildren().add(grid.getGrid()[pos.getX()][pos.getY()]);
+            }
         }
+        
+        sim.getThread().setDaemon(true);
+        
+        runSimulationButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent arg0){
+                sim.getThread().start();
+                runSimulationButton.setText("Running");
+            }
+        });
+
+        root.getChildren().add(runSimulationButton);
+        return root;
+    }
+
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        scene = new Scene(createContent());
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    public static void main(String[] args) throws Exception {
+        launch(args);
       }
 }
