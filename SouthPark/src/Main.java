@@ -12,8 +12,8 @@ public class Main extends Application{
     private static final int TILE_SIZE = 40;
     private static final int W = 800;
     private static final int H = 600;
-    private static final int X_TILES = W / TILE_SIZE;
-    private static final int Y_TILES = H / TILE_SIZE;
+    public static final int X_TILES = W / TILE_SIZE;
+    public static final int Y_TILES = H / TILE_SIZE;
     private Grid grid = new Grid(X_TILES, Y_TILES);
 
     private Parent createContent() {

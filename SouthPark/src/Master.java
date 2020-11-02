@@ -8,6 +8,7 @@ public class Master extends Character{
     private Bullygirls bullygirls;
     private DrunkBoys drunkBoys;
     private ArrayList<Position> safeZone;
+
     public Master(
             String name,
             List<String> insultList,
@@ -19,17 +20,23 @@ public class Master extends Character{
         this.safeZone = new ArrayList<Position>();
         for (int i=0;i<size;i++){
             for(int j=0;j<size;j++){
-                Cell sfCell = this.grid.getGrid()[position.getX()+i][position.getY()+j];
+                int positionX = position.getX()>Main.X_TILES/2?position.getX()-i:position.getX()+i;
+                int positionY = position.getY()>Main.Y_TILES/2?position.getY()-j:position.getY()+j;
+                Cell sfCell = this.grid.getGrid()[positionX][positionY];
                 this.safeZone.add(sfCell.getPosition());
                 switch (name){
                     case "Cartman" :
                         sfCell.setContent(Content.CartmanSafeZone);
+                        break;
                     case "Kenny" :
                         sfCell.setContent(Content.KennySafeZone);
+                        break;
                     case "Kyle":
                         sfCell.setContent(Content.KyleSafeZone);
+                        break;
                     case "Stan":
                         sfCell.setContent(Content.StanSafeZone);
+                        break;
                 }
             }
         }

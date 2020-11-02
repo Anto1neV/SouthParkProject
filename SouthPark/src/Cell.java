@@ -79,9 +79,11 @@ public class Cell extends StackPane{
                 this.text.setText("");
             break;
             case CartmanSafeZone:
+                this.text.setText("");
                 this.border.setStroke(Color.RED);
             break;
             case KennySafeZone:
+                this.text.setText("");
                 this.border.setStroke(Color.ORANGE);
             break;
         }

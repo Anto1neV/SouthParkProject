@@ -6,12 +6,11 @@ import java.util.stream.Collectors;
 public abstract class Minions extends Character {
     private int mp;
     protected Master master;
-    private Random rand = new Random();
+    private final int MAXMP=1000;
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
-        this.insultList = this.master.getInsultList();
-        this.mp = 10;
+        this.mp = MAXMP;
         this.grid.getGrid()[position.getX()][position.getY()].setMinion(this);
     }
 
@@ -21,27 +20,22 @@ public abstract class Minions extends Character {
 
     public void setMaster(Master master) {
         this.master = master;
+        this.insultList=this.master.getInsultList();
     }
 
     public void move() {
         if (this.mp > 0) {
-            List<Position> shortestPath = shortestPath();
+            List<Position> shortestPath = leeAlgorithm(this.position,this.master.getSafeZone());
             if (checkEnoughMP(shortestPath)) {
-                refillMP();
                 List<Cell> AdjacentCells = getAdjacentCells(this.position);
                 Cell nextCell;
                 if (AdjacentCells.size() != 0) {
-                    nextCell = AdjacentCells.get(rand.nextInt(AdjacentCells.size()));
+                    Random random = new Random();
+                    nextCell = AdjacentCells.get(random.nextInt(AdjacentCells.size()));
                 } else
                     return;
 
                 switch (nextCell.getContent()) {
-                    case Void:
-                        this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
-                        this.setPosition(nextCell.getPosition());
-                        this.mp--;
-                        nextCell.setMinion(this);
-                        break;
                     case Border:
                         break;
                     case Obstacle:
@@ -50,11 +44,16 @@ public abstract class Minions extends Character {
                         interactWithCharacterRPC(nextCell.getPosition());
                         break;
                     default:
+                        this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
+                            this.setPosition(nextCell.getPosition());
+                            this.mp--;
+                            nextCell.setMinion(this);
                         break;
                 }
             } else {
                 backToSafeZone(shortestPath);
             }
+            refillMP();
         } else {
             System.out.println(this.master + "'s minion is out of the game because he don't have enought MP");
             Cell dead = this.grid.getGrid()[this.position.getX()][this.position.getY()];
@@ -93,14 +92,15 @@ public abstract class Minions extends Character {
                 case "gangMate":
                     int halfOfnotPresent = notPresent.size() / 2;
                     for (int i = 0; i < halfOfnotPresent; i++) {
-                        this.insultList.add(characterMet.insultList.get(i));
+                        this.insultList.add(notPresent.get(i));
                     }
                     System.out.println("OK ! I give you the half...");
                     break;
-                default:
-                    int SomeOfnotPresent = notPresent.size() / (rand.nextInt(notPresent.size()));
+                case "ennemy":
+                    Random divRandom = new Random();
+                    int SomeOfnotPresent = notPresent.size() / divRandom.nextInt(notPresent.size())+1;
                     for (int i = 0; i < SomeOfnotPresent; i++) {
-                        this.insultList.add(characterMet.insultList.get(i));
+                        this.insultList.add(notPresent.get(i));
                     }
                     System.out.println("OK ! I give you " + SomeOfnotPresent + "bad words ...");
                     break;
@@ -114,22 +114,6 @@ public abstract class Minions extends Character {
         } else {
             return false;
         }
-    }
-
-    private List<Position> shortestPath() {
-        List<Position> possibleEnd = new ArrayList<Position>();
-        int masterSize = this.master.size;
-
-        // Stock the SafeZone's border Cells
-        for (int y = this.master.getPosition().getY(); y <= masterSize; y++) {
-            for (int x = this.master.getPosition().getX(); x <= masterSize; x++) {
-                if (y == masterSize || x == masterSize) {
-                    Position currentPosition = this.grid.getGrid()[x][y].getPosition();
-                    possibleEnd.add(currentPosition);
-                }
-            }
-        }
-        return leeAlgorithm(this.position, possibleEnd);
     }
 
     private List<Position> leeAlgorithm(Position start, List<Position> safeZone) {
@@ -238,7 +222,7 @@ public abstract class Minions extends Character {
 
     private void refillMP() {
         if (this.master.getSafeZone().contains(this.position)) {
-            this.mp = 10;
+            this.mp = MAXMP;
             shareKnowledge("teamMate", this.master);
             System.out.println("Refill...");
         }
@@ -255,6 +239,5 @@ public abstract class Minions extends Character {
             this.mp--;
             nextCell.setMinion(this);
         }
-        refillMP();
     }
 }

@@ -33,8 +33,8 @@ public class Simulation {
                 @Override
                 public void run() {
                     for (int i = 0; i < 3; i++) {
-                        kenny.getMinions().get(i).move();
                         cartman.getMinions().get(i).move();
+                        kenny.getMinions().get(i).move();
                     }
                 }
             };
@@ -50,14 +50,6 @@ public class Simulation {
             Runnable setCharacter = new Runnable() {
                 @Override
                 public void run() {
-                    BadassBoys bb1 = new BadassBoys(Gang.WestGang, new Position(4, 4), grid);
-                    Bullygirls bg1 = new Bullygirls(Gang.WestGang, new Position(2, 4), grid);
-                    DrunkBoys db1 = new DrunkBoys(Gang.WestGang, new Position(3, 4), grid);
-
-                    BadassBoys bb2 = new BadassBoys(Gang.EastGang, new Position(5, 9), grid);
-                    Bullygirls bg2 = new Bullygirls(Gang.EastGang, new Position(5, 8), grid);
-                    DrunkBoys db2 = new DrunkBoys(Gang.EastGang, new Position(5, 7), grid);
-
                     List<String> insultCartman = new ArrayList<String>() {
                         {
                             add("Va chier !!!");
@@ -75,9 +67,15 @@ public class Simulation {
                     };
 
                     cartman = new Master("Cartman", insultCartman, 3, Gang.WestGang, new Position(1, 1), grid);
+                    BadassBoys bb1 = new BadassBoys(Gang.WestGang, new Position(4, 4), grid);
+                    Bullygirls bg1 = new Bullygirls(Gang.WestGang, new Position(2, 4), grid);
+                    DrunkBoys db1 = new DrunkBoys(Gang.WestGang, new Position(3, 4), grid);
                     cartman.setMinions(bb1, bg1, db1);
 
-                    kenny = new Master("Kyle", insultKyle, 3, Gang.EastGang, new Position(9, 9), grid);
+                    kenny = new Master("Kenny", insultKyle, 3, Gang.EastGang, new Position(18, 13), grid);
+                    BadassBoys bb2 = new BadassBoys(Gang.EastGang, new Position(18, 10), grid);
+                    Bullygirls bg2 = new Bullygirls(Gang.EastGang, new Position(17, 10), grid);
+                    DrunkBoys db2 = new DrunkBoys(Gang.EastGang, new Position(16, 10), grid);
                     kenny.setMinions(bb2, bg2, db2);
                 }
             };
@@ -86,9 +84,9 @@ public class Simulation {
                 Platform.runLater(setCharacter);
                 isCharacterset = true;
             }
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 10000; i++) {
                 try {
-                    Thread.sleep(600);
+                    Thread.sleep(150);
                 } catch (InterruptedException ex) {
                 }
                 Platform.runLater(minionMover);

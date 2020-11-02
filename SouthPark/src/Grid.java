@@ -20,7 +20,7 @@ public class Grid {
             for (int x=0; x<nbColumn; x++){
                 Position position = new Position(x,y);
                 isBorder =(x==0||x==nbColumn-1||y==0||y==nbRow-1);
-                grid[x][y]= new Cell(position,isBorder,(isBorder||rand.nextInt(100)>10)?false:true);
+                grid[x][y]= new Cell(position,isBorder,(isBorder||rand.nextInt(100)>5)?false:true);
             }
         }
     }
