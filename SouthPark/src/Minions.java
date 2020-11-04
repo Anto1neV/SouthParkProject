@@ -97,8 +97,8 @@ public abstract class Minions extends Character {
                     System.out.println("OK ! I give you the half...");
                     break;
                 case "ennemy":
-                    Random divRandom = new Random();
-                    int SomeOfnotPresent = notPresent.size() / divRandom.nextInt(notPresent.size())+1;
+                    int divRandom = (int) (Math.random()*notPresent.size()+1); 
+                    int SomeOfnotPresent = notPresent.size() / divRandom; 
                     for (int i = 0; i < SomeOfnotPresent; i++) {
                         this.insultList.add(notPresent.get(i));
                     }

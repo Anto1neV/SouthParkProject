@@ -86,7 +86,7 @@ public class Simulation {
             }
             for (int i = 0; i < 10000; i++) {
                 try {
-                    Thread.sleep(150);
+                    Thread.sleep(10);
                 } catch (InterruptedException ex) {
                 }
                 Platform.runLater(minionMover);
