@@ -20,7 +20,7 @@ public abstract class Minions extends Character {
 
     public void setMaster(Master master) {
         this.master = master;
-        this.insultList=this.master.getInsultList();
+        this.insultList.addAll(this.master.getInsultList());
     }
 
     public void move() {
@@ -63,17 +63,17 @@ public abstract class Minions extends Character {
     }
 
     private void interactWithCharacterRPC(Position characterPosition) {
-        Minions characterMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getMinion();
-        if (characterMet != this) {
-            if (characterMet.getMaster() == this.master) {
+        Minions minionMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getMinion();
+        if (minionMet != this) {
+            if (minionMet.getMaster() == this.master) {
                 System.out.println("this is a friend");
-                shareKnowledge("teamMate", characterMet);
-            } else if (characterMet.getMaster() != this.master && characterMet.gang == this.gang) {
+                shareKnowledge("teamMate", minionMet);
+            } else if (minionMet.getMaster() != this.master && minionMet.gang == this.gang) {
                 System.out.println("yo yo, wasup gang mate !!");
-                shareKnowledge("gangMate", characterMet);
+                shareKnowledge("gangMate", minionMet);
             } else {
                 System.out.println("Suprise motherfucker !!!");
-                fightRPC(characterMet);
+                fightRPC(minionMet);
             }
         }
     }
@@ -81,29 +81,42 @@ public abstract class Minions extends Character {
     public abstract List<Cell> getAdjacentCells(Position currentPosition);
 
     private void shareKnowledge(String withWho, Character characterMet) {
-        List<String> notPresent = new ArrayList<String>(characterMet.insultList);
-        notPresent.removeAll(this.insultList); // All unknown insults of the charac
-        if (!notPresent.isEmpty()) {
-            switch (withWho) {
-                case "teamMate":
-                    this.insultList.addAll(notPresent);
-                    System.out.println("Take all my list !");
-                    break;
-                case "gangMate":
-                    int halfOfnotPresent = notPresent.size() / 2;
-                    for (int i = 0; i < halfOfnotPresent; i++) {
-                        this.insultList.add(notPresent.get(i));
-                    }
-                    System.out.println("OK ! I give you the half...");
-                    break;
-                case "ennemy":
-                    int divRandom = (int) (Math.random()*notPresent.size()+1); 
-                    int SomeOfnotPresent = notPresent.size() / divRandom; 
-                    for (int i = 0; i < SomeOfnotPresent; i++) {
-                        this.insultList.add(notPresent.get(i));
-                    }
-                    System.out.println("OK ! I give you " + SomeOfnotPresent + "bad words ...");
-                    break;
+        if(characterMet==this){
+            List<String> notPresent = new ArrayList<String>(characterMet.insultList);
+            notPresent.removeAll(this.master.getInsultList());
+            if(!notPresent.isEmpty()){
+                List<String> masterList = new ArrayList<>();
+                masterList.addAll(this.master.insultList);
+                masterList.addAll(notPresent);
+                this.master.setInsultList(masterList);
+            }
+        }
+        else{
+            List<String> notPresent = new ArrayList<String>(characterMet.insultList);
+            notPresent.removeAll(this.insultList); // All unknown insults of the charac
+            if (!notPresent.isEmpty()) {
+                switch (withWho) {
+                    case "teamMate":
+                    case "master":
+                        this.insultList.addAll(notPresent);
+                        System.out.println("Take all my list !");
+                        break;
+                    case "gangMate":
+                        int halfOfnotPresent = notPresent.size() / 2;
+                        for (int i = 0; i < halfOfnotPresent; i++) {
+                            this.insultList.add(notPresent.get(i));
+                        }
+                        System.out.println("OK ! I give you the half...");
+                        break;
+                    case "ennemy":
+                        int divRandom = (int) (Math.random()*notPresent.size()+1); 
+                        int SomeOfnotPresent = notPresent.size() / divRandom; 
+                        for (int i = 0; i < SomeOfnotPresent; i++) {
+                            this.insultList.add(notPresent.get(i));
+                        }
+                        System.out.println("OK ! I give you " + SomeOfnotPresent + "bad words ...");
+                        break;
+                }
             }
         }
     }
@@ -194,12 +207,8 @@ public abstract class Minions extends Character {
 
             if ((var2 == 0 && var1 == 2) || (var2 == 1 && var1 == 0) || (var2 == 2 && var1 == 1)) {
                 scMinionMet = 1;
-                System.out.println("Minion's met wins");
+                System.out.println("Ennemy wins");
             }
-        }
-
-        if (scMinion == 1) {
-
         }
     }
 
@@ -223,7 +232,8 @@ public abstract class Minions extends Character {
     private void refillMP() {
         if (this.master.getSafeZone().contains(this.position)) {
             this.mp = MAXMP;
-            shareKnowledge("teamMate", this.master);
+            shareKnowledge("master", this.master);
+            shareKnowledge("teamMate", this);
             System.out.println("Refill...");
         }
     }

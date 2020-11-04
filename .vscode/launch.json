@@ -8,6 +8,7 @@
             "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
+            "vmArgs": "--module-path JavaFx/javafx-sdk-11.0.2/lib/ --add-modules javafx.controls,javafx.fxml",
             "mainClass": "${file}"
         },
         {
@@ -15,6 +16,7 @@
             "name": "Debug (Launch)-Main<SouthParkProject_e6a9dc75>",
             "request": "launch",
             "mainClass": "Main",
+            "vmArgs": "--module-path JavaFx/javafx-sdk-11.0.2/lib/ --add-modules javafx.controls,javafx.fxml",
             "projectName": "SouthParkProject_e6a9dc75"
         }
     ]

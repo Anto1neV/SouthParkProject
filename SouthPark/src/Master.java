@@ -18,6 +18,7 @@ public class Master extends Character{
             Grid grid){
         super(insultList, size, gang, position,grid);
         this.safeZone = new ArrayList<Position>();
+        this.name = name;
         for (int i=0;i<size;i++){
             for(int j=0;j<size;j++){
                 int positionX = position.getX()>Main.X_TILES/2?position.getX()-i:position.getX()+i;

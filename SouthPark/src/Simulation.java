@@ -17,6 +17,7 @@ public class Simulation {
     private Master cartman;
     private Master kenny;
     private Grid grid;
+    private Boolean endOfTheGame = false;
 
     public Simulation(Button button, Grid grid) {
         this.button = button;
@@ -35,6 +36,17 @@ public class Simulation {
                     for (int i = 0; i < 3; i++) {
                         cartman.getMinions().get(i).move();
                         kenny.getMinions().get(i).move();
+                        if(cartman.getInsultList().size()==6){
+                            System.out.println("Cartman WIN the game");
+                            System.out.println("\"Lâche toi ! Vas-y mets le feu ! Disco Sensation !!\"");
+                            endOfTheGame = true;
+                            break;
+                        } else if (kenny.getInsultList().size()==6){
+                            System.out.println("Kenny WIN the game");
+                            System.out.println("Fmmmmmpmffmffmp çmmm fpmmmm");
+                            endOfTheGame = true;
+                            break;
+                        }
                     }
                 }
             };
@@ -90,9 +102,12 @@ public class Simulation {
                 } catch (InterruptedException ex) {
                 }
                 Platform.runLater(minionMover);
-                if (i == 99) {
+                if (i == 9999) {
                     Platform.runLater(buttonUpdater);
                     thread.interrupt();
+                }
+                if(endOfTheGame){
+                    break;
                 }
             }
         }
