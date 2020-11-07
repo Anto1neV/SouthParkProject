@@ -42,22 +42,25 @@ public class Simulation {
                         kyle.getMinions().get(i).move();
                         stan.getMinions().get(i).move();
 
-                        if (cartman.getInsultList().size() == 12) {
+                        if (cartman.getInsultList().size() == 12 && !endOfTheGame) {
                             System.out.println("Cartman WIN the game");
                             System.out.println("\"Lâche toi ! Vas-y mets le feu ! Disco Sensation !!\"");
                             endOfTheGame = true;
                             break;
-                        } else if (kenny.getInsultList().size() == 12) {
+                        }
+                        else if (kenny.getInsultList().size() == 12 && !endOfTheGame) {
                             System.out.println("Kenny WIN the game");
                             System.out.println("Fmmmmmpmffmffmp çmmm fpmmmm");
                             endOfTheGame = true;
                             break;
-                        } else if (kyle.getInsultList().size() == 12) {
+                        }
+                        else if (kyle.getInsultList().size() == 12 && !endOfTheGame) {
                             System.out.println("Kyle WIN the game");
                             System.out.println("Waouh, c'était cool.");
                             endOfTheGame = true;
                             break;
-                        } else if (stan.getInsultList().size() == 12) {
+                        }
+                        else if (stan.getInsultList().size() == 12 && !endOfTheGame) {
                             System.out.println("Stan WIN the game");
                             System.out.println("Les dauphins sont intelligents et ils sont gentils. Je suis un dauphin !");
                             endOfTheGame = true;
@@ -140,27 +143,23 @@ public class Simulation {
                 Platform.runLater(setCharacter);
                 isCharacterset = true;
             }
-            for (int i = 0; i < 10000; i++) {
+            while (!endOfTheGame){
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (InterruptedException ex) {
                 }
                 Platform.runLater(minionMover);
-                if (i == 9999) {
-                    Platform.runLater(buttonUpdater);
-                    thread.interrupt();
-                }
-                if (endOfTheGame) {
-                    break;
-                }
             }
+            killThread();
         }
-
     });
 
     public Thread getThread() {
         return this.thread;
     }
-
+    
+    private void killThread() {
+        this.thread.interrupt();
+    }
 }
 // https://riptutorial.com/javafx/example/7291/updating-the-ui-using-platform-runlater

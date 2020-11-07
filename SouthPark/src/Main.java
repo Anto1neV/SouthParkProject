@@ -14,7 +14,7 @@ public class Main extends Application{
     private static final int H = 600;
     public static final int X_TILES = W / TILE_SIZE;
     public static final int Y_TILES = H / TILE_SIZE;
-    private Grid grid = new Grid(X_TILES, Y_TILES);
+    private Grid grid = Grid.getGridInstance(X_TILES,Y_TILES);
 
     private Parent createContent() {
         Pane root = new Pane();
