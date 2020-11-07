@@ -27,8 +27,9 @@ public class Cell extends StackPane{
         }
 
         border.setStroke(Color.LIGHTGRAY);
-        text.setFont(Font.font(18));
+        text.setFont(Font.font(22));
         text.setStroke(Color.LIGHTGRAY);
+        text.setFill(Color.LIGHTGREY);
         this.setGraphic();
         getChildren().addAll(border, text, imageView);
 
@@ -106,18 +107,23 @@ public class Cell extends StackPane{
             switch (this.minion.getMaster().getName()){
                 case "Cartman":
                     this.text.setText("C");
-                    this.text.setFill(Color.RED);
+                    this.text.setStroke(Color.rgb(170, 16, 28));
+                    this.text.setFill(Color.rgb(170, 16, 28));
                     break;
                 case "Kenny":
                     this.text.setText("K");
-                    this.text.setFill(Color.ORANGE);
+                    this.text.setStroke(Color.rgb(253, 94, 1));
+                    this.text.setFill(Color.rgb(253, 94, 1));
+                    break;
                 case "Kyle":
                     this.text.setText("K");
-                    this.text.setFill(Color.rgb(46, 253, 92));
+                    this.text.setStroke(Color.rgb(34, 200, 107));
+                    this.text.setFill(Color.rgb(34, 200, 107));
                     break;
                 case "Stan":
                     this.text.setText("S");
-                    this.text.setFill(Color.BLUE);
+                    this.text.setStroke(Color.rgb(42, 166, 185));
+                    this.text.setFill(Color.rgb(42, 166, 185));
                 break;
             }
         }

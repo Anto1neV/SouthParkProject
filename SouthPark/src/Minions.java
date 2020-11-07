@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public abstract class Minions extends Character {
     private int mp;
     protected Master master;
-    private final int MAXMP=1000;
+    private final int MAXMP=50;
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
