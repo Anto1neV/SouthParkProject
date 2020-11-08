@@ -1,5 +1,7 @@
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import javafx.animation.KeyFrame;
@@ -12,6 +14,10 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -24,17 +30,14 @@ public class Simulation {
     private Master stan;
     private Grid grid;
     private Boolean endOfTheGame = false;
-    //private Timeline timeline;
+    private ImageView imageView;
 
-    public Simulation(Button button, Grid grid) {
+    public Simulation(Button button, Grid grid, ImageView imageView) {
         this.button = button;
         this.grid = grid;
-        //this.timeline = new Timeline(new KeyFrame(Duration.millis(500), this::moveMinions));
+        this.imageView = imageView;
     }
 
-    // private void moveMinions(ActionEvent actionEvent){
-
-    // }
 
     // longrunning operation runs on different thread
     private Thread thread = new Thread(new Runnable() {
@@ -45,6 +48,7 @@ public class Simulation {
             Runnable minionMover = new Runnable() {
                 @Override
                 public void run() {
+                    Image image = null;
                     for (int i = 0; i < 3; i++) {
 
                         if(!endOfTheGame){
@@ -57,39 +61,38 @@ public class Simulation {
                             if (cartman.getInsultList().size() == 12) {
                                 System.out.println("Cartman WIN the game");
                                 System.out.println("\"Lâche toi ! Vas-y mets le feu ! Disco Sensation !!\"");
+                                image = new Image("/icons/Cartman.png");
+                                imageView.setImage(image);
                                 endOfTheGame = true;
                                 break;
                             }
                             else if (kenny.getInsultList().size() == 12) {
                                 System.out.println("Kenny WIN the game");
                                 System.out.println("Fmmmmmpmffmffmp çmmm fpmmmm");
+                                image = new Image("/icons/Kenny.png");
+                                imageView.setImage(image);
                                 endOfTheGame = true;
                                 break;
                             }
                             else if (kyle.getInsultList().size() == 12) {
                                 System.out.println("Kyle WIN the game");
                                 System.out.println("Waouh, c'était cool.");
+                                image = new Image("/icons/Kyle.png");
+                                imageView.setImage(image);
                                 endOfTheGame = true;
                                 break;
                             }
                             else if (stan.getInsultList().size() == 12) {
                                 System.out.println("Stan WIN the game");
                                 System.out.println("Les dauphins sont intelligents et ils sont gentils. Je suis un dauphin !");
+                                image = new Image("/icons/Stan.png");
+                                imageView.setImage(image);
                                 endOfTheGame = true;
                                 break;
                             }
-                    }
+                        }
                     }
                 }
-            };
-
-            Runnable buttonUpdater = new Runnable() {
-
-                @Override
-                public void run() {
-                    button.setText("Restart ?");
-                }
-
             };
             Runnable setCharacter = new Runnable() {
                 @Override
@@ -158,7 +161,7 @@ public class Simulation {
             }
             while (!endOfTheGame){
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException ex) {
                     System.out.println(ex.getMessage());
                 }

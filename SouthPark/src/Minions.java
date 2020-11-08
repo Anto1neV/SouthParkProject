@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public abstract class Minions extends Character {
     private int mp;
     protected Master master;
-    private final int MAXMP=70;
+    private final int MAXMP=50;
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
@@ -56,7 +56,6 @@ public abstract class Minions extends Character {
             }
             refillMP();
         } else {
-            //System.out.println(this.master + "'s minion is out of the game because he don't have enought MP");
             Cell dead = this.grid.getGrid()[this.position.getX()][this.position.getY()];
             dead.removeCharacter();
             dead.setContent(Content.Obstacle);
@@ -67,13 +66,13 @@ public abstract class Minions extends Character {
         Minions minionMet = grid.getGrid()[characterPosition.getX()][characterPosition.getY()].getMinion();
         if (minionMet != this) {
             if (minionMet.getMaster() == this.master) {
-                System.out.println("this is a friend");
+                //System.out.println("2 "+this.master.getName()+" minions share list.");
                 shareKnowledge("teamMate", minionMet);
             } else if (minionMet.getMaster() != this.master && minionMet.gang == this.gang) {
-                System.out.println("yo yo, wasup gang mate !!");
+                System.out.println("2 minions from the "+this.gang+" share half of there insult list.");
                 shareKnowledge("gangMate", minionMet);
             } else {
-                System.out.println("Suprise motherfucker !!!");
+                System.out.println("Wild enemy appeared. Let's fIGHT!!!");
                 fightRPC(minionMet);
             }
         }
@@ -100,22 +99,20 @@ public abstract class Minions extends Character {
                     case "teamMate":
                     case "master":
                         this.insultList.addAll(notPresent);
-                        System.out.println("Take all my list !");
                         break;
                     case "gangMate":
                         int halfOfnotPresent = notPresent.size() / 2;
                         for (int i = 0; i < halfOfnotPresent; i++) {
                             this.insultList.add(notPresent.get(i));
                         }
-                        System.out.println("OK ! I give you the half...");
                         break;
                     case "ennemy":
                         int divRandom = (int) (Math.random()*notPresent.size()+1); 
                         int SomeOfnotPresent = notPresent.size() / divRandom; 
                         for (int i = 0; i < SomeOfnotPresent; i++) {
                             this.insultList.add(notPresent.get(i));
+                            System.out.println(this.master.getName()+"'s minion : "+notPresent.get(i));
                         }
-                        System.out.println("OK ! I give you " + SomeOfnotPresent + "bad words ...");
                         break;
                 }
             }
@@ -140,12 +137,12 @@ public abstract class Minions extends Character {
         Integer i = 0;
         leePositions.add(start);
         leeInt.add(i);
-        for(int k=0;k<300;k++) {
+        while(!endFound){
             // For every cells with the index i
             List<Integer> allIndex = findAllIndexes(leeInt, i);
             for (Integer index : allIndex) {
                 for (Cell cell : getAdjacentCells(leePositions.get(index))) {
-                    if (cell.getContent() == Content.Void && !leePositions.contains(cell.getPosition())) {
+                    if ((cell.getContent() == Content.Void || cell.getContent() == Content.CHARACTER )  && !leePositions.contains(cell.getPosition())) {
                         leePositions.add(cell.getPosition());
                         leeInt.add(i + 1);
                     }
@@ -161,9 +158,6 @@ public abstract class Minions extends Character {
                 }
             }
             i++;
-        }
-        if(!endFound){
-            System.out.println("end not found !!!");
         }
         // Store the good path
         shortPathList.add(endPosition);
@@ -217,17 +211,7 @@ public abstract class Minions extends Character {
     private int chooseTypeRPC() {
         int x;
         Random rand = new Random();
-        switch (x = rand.nextInt(3)) {
-            case (0):
-                System.out.println("Rock is chosen");
-                break;
-            case (1):
-                System.out.println("Paper is chosen");
-                break;
-            case (2):
-                System.out.println("Cisors are chosen");
-                break;
-        }
+        x = rand.nextInt(3);
         return x;
     }
 
@@ -241,14 +225,15 @@ public abstract class Minions extends Character {
 
     private void backToSafeZone(List<Position> shortestPath) {
         if (shortestPath.size() > 0) {
-            System.out.println("Back to Safe Zone");
             int x = shortestPath.get(shortestPath.size() - 1).getX();
             int y = shortestPath.get(shortestPath.size() - 1).getY();
             Cell nextCell = grid.getGrid()[x][y];
-            this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
-            this.setPosition(nextCell.getPosition());
-            this.mp--;
-            nextCell.setMinion(this);
+            if(nextCell.getContent()==Content.Void){
+                this.grid.getGrid()[this.position.getX()][this.position.getY()].removeCharacter();
+                this.setPosition(nextCell.getPosition());
+                this.mp--;
+                nextCell.setMinion(this);
+            }
         }
     }
 }

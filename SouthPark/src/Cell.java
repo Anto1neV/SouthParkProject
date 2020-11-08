@@ -15,7 +15,6 @@ public class Cell extends StackPane{
     //Graphic elements
     private Rectangle border = new Rectangle(TILE_SIZE - 2, TILE_SIZE - 2);
     private Text text = new Text();
-    private ImageView imageView = new ImageView();
     
     public Cell(Position position,Boolean isBorder,Boolean isObstacle){
         this.position=position;
@@ -31,7 +30,7 @@ public class Cell extends StackPane{
         text.setStroke(Color.LIGHTGRAY);
         text.setFill(Color.LIGHTGREY);
         this.setGraphic();
-        getChildren().addAll(border, text, imageView);
+        getChildren().addAll(border, text);
 
         setTranslateX(position.getX() * TILE_SIZE);
         setTranslateY(position.getY() * TILE_SIZE);

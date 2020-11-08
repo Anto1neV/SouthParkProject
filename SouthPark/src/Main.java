@@ -4,7 +4,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Main extends Application{
@@ -19,7 +21,8 @@ public class Main extends Application{
     private Parent createContent() {
         Pane root = new Pane();
         Button runSimulationButton = new Button("Start");
-        Simulation sim = new Simulation(runSimulationButton,this.grid);
+        ImageView winnerView = new ImageView();
+        Simulation sim = new Simulation(runSimulationButton,this.grid,winnerView);
         root.setPrefSize(W, H);
 
         for (int y = 0; y < Y_TILES; y++) {
@@ -38,8 +41,7 @@ public class Main extends Application{
                 runSimulationButton.setText("Running");
             }
         });
-
-        root.getChildren().add(runSimulationButton);
+        root.getChildren().addAll(runSimulationButton, winnerView);
         return root;
     }
 
