@@ -8,8 +8,6 @@ public class Bullygirls extends Minions  {
         this.insultList=super.insultList;
     }
 
-
-
     //diagonale
     @Override
     public ArrayList <Cell>  getAdjacentCells(Position currentPosition){

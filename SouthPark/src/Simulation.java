@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -10,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class Simulation {
 
@@ -20,11 +24,17 @@ public class Simulation {
     private Master stan;
     private Grid grid;
     private Boolean endOfTheGame = false;
+    //private Timeline timeline;
 
     public Simulation(Button button, Grid grid) {
         this.button = button;
         this.grid = grid;
+        //this.timeline = new Timeline(new KeyFrame(Duration.millis(500), this::moveMinions));
     }
+
+    // private void moveMinions(ActionEvent actionEvent){
+
+    // }
 
     // longrunning operation runs on different thread
     private Thread thread = new Thread(new Runnable() {
@@ -37,35 +47,38 @@ public class Simulation {
                 public void run() {
                     for (int i = 0; i < 3; i++) {
 
-                        cartman.getMinions().get(i).move();
-                        kenny.getMinions().get(i).move();
-                        kyle.getMinions().get(i).move();
-                        stan.getMinions().get(i).move();
+                        if(!endOfTheGame){
+                            cartman.getMinions().get(i).move();      
+                            kenny.getMinions().get(i).move();
+                            kyle.getMinions().get(i).move();
+                            stan.getMinions().get(i).move();
+                           
 
-                        if (cartman.getInsultList().size() == 12 && !endOfTheGame) {
-                            System.out.println("Cartman WIN the game");
-                            System.out.println("\"Lâche toi ! Vas-y mets le feu ! Disco Sensation !!\"");
-                            endOfTheGame = true;
-                            break;
-                        }
-                        else if (kenny.getInsultList().size() == 12 && !endOfTheGame) {
-                            System.out.println("Kenny WIN the game");
-                            System.out.println("Fmmmmmpmffmffmp çmmm fpmmmm");
-                            endOfTheGame = true;
-                            break;
-                        }
-                        else if (kyle.getInsultList().size() == 12 && !endOfTheGame) {
-                            System.out.println("Kyle WIN the game");
-                            System.out.println("Waouh, c'était cool.");
-                            endOfTheGame = true;
-                            break;
-                        }
-                        else if (stan.getInsultList().size() == 12 && !endOfTheGame) {
-                            System.out.println("Stan WIN the game");
-                            System.out.println("Les dauphins sont intelligents et ils sont gentils. Je suis un dauphin !");
-                            endOfTheGame = true;
-                            break;
-                        }
+                            if (cartman.getInsultList().size() == 12) {
+                                System.out.println("Cartman WIN the game");
+                                System.out.println("\"Lâche toi ! Vas-y mets le feu ! Disco Sensation !!\"");
+                                endOfTheGame = true;
+                                break;
+                            }
+                            else if (kenny.getInsultList().size() == 12) {
+                                System.out.println("Kenny WIN the game");
+                                System.out.println("Fmmmmmpmffmffmp çmmm fpmmmm");
+                                endOfTheGame = true;
+                                break;
+                            }
+                            else if (kyle.getInsultList().size() == 12) {
+                                System.out.println("Kyle WIN the game");
+                                System.out.println("Waouh, c'était cool.");
+                                endOfTheGame = true;
+                                break;
+                            }
+                            else if (stan.getInsultList().size() == 12) {
+                                System.out.println("Stan WIN the game");
+                                System.out.println("Les dauphins sont intelligents et ils sont gentils. Je suis un dauphin !");
+                                endOfTheGame = true;
+                                break;
+                            }
+                    }
                     }
                 }
             };
@@ -145,8 +158,9 @@ public class Simulation {
             }
             while (!endOfTheGame){
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
+                    System.out.println(ex.getMessage());
                 }
                 Platform.runLater(minionMover);
             }

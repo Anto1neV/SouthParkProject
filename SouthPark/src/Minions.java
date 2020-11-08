@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public abstract class Minions extends Character {
     private int mp;
     protected Master master;
-    private final int MAXMP=50;
+    private final int MAXMP=70;
 
     public Minions(Gang gang, Position position, Grid grid) {
         super(new ArrayList<String>(), 1, gang, position, grid);
@@ -32,8 +32,9 @@ public abstract class Minions extends Character {
                 if (AdjacentCells.size() != 0) {
                     Random random = new Random();
                     nextCell = AdjacentCells.get(random.nextInt(AdjacentCells.size()));
-                } else
+                } else{
                     return;
+                }
 
                 switch (nextCell.getContent()) {
                     case Border:
@@ -55,7 +56,7 @@ public abstract class Minions extends Character {
             }
             refillMP();
         } else {
-            System.out.println(this.master + "'s minion is out of the game because he don't have enought MP");
+            //System.out.println(this.master + "'s minion is out of the game because he don't have enought MP");
             Cell dead = this.grid.getGrid()[this.position.getX()][this.position.getY()];
             dead.removeCharacter();
             dead.setContent(Content.Obstacle);
@@ -136,13 +137,13 @@ public abstract class Minions extends Character {
         Boolean endFound = false;
         Position endPosition = null;
         // Fill in the lee's tables
-        int i = 0;
+        Integer i = 0;
         leePositions.add(start);
         leeInt.add(i);
-        while (!endFound) {
+        for(int k=0;k<300;k++) {
             // For every cells with the index i
             List<Integer> allIndex = findAllIndexes(leeInt, i);
-            for (int index : allIndex) {
+            for (Integer index : allIndex) {
                 for (Cell cell : getAdjacentCells(leePositions.get(index))) {
                     if (cell.getContent() == Content.Void && !leePositions.contains(cell.getPosition())) {
                         leePositions.add(cell.getPosition());
@@ -161,7 +162,9 @@ public abstract class Minions extends Character {
             }
             i++;
         }
-
+        if(!endFound){
+            System.out.println("end not found !!!");
+        }
         // Store the good path
         shortPathList.add(endPosition);
         for (int j = i - 1; j >= 0; j--) {
@@ -194,7 +197,6 @@ public abstract class Minions extends Character {
         int scMinion = 0;
         int var1 = -1;
         int var2 = -1;
-
         while (scMinionMet == 0 || scMinion == 0) {
             var1 = this.chooseTypeRPC();
             var2 = minion.chooseTypeRPC();
@@ -234,7 +236,6 @@ public abstract class Minions extends Character {
             this.mp = MAXMP;
             shareKnowledge("master", this.master);
             shareKnowledge("teamMate", this);
-            System.out.println("Refill...");
         }
     }
 
