@@ -161,7 +161,7 @@ public class Simulation {
             }
             while (!endOfTheGame){
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     System.out.println(ex.getMessage());
                 }
